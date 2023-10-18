@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using BlazorEcommerce.Server.Services.ProductService;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorEcommerce.Server.Controllers
@@ -7,17 +8,18 @@ namespace BlazorEcommerce.Server.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly DataContext _context; //is used to access the data source (e.g., a database) to retrieve products.
-        public ProductController(DataContext context)  // Dependency injection is often used in ASP.NET Core to provide the controller with the required services
+        private readonly InProductService _productService; 
+        public ProductController(InProductService productService)  // Dependency injection is often used in ASP.NET Core to provide the controller with the required services
         {
-            _context = context;
+            _productService = productService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Product>>> GetProduct()
+        public async Task<ActionResult<ServiceResponse<List<Product>>>> GetProduct()
         {
-            var products = await _context.Products.ToListAsync();
-            return Ok(products);
+
+            var result = await _productService.GetProductsAsync();
+            return Ok(result);
         }
     }
 }
